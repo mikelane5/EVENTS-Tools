@@ -1,31 +1,38 @@
 # **EVENTS Tools**  
-This set of scripts Will help getting Practice Sections easily on your chart, you can also place events like **[music_start]**, **[music_end]**, **[end]**, or any Crowd Clapping event from here!  
+
+Event Tools helps you add common **Practice Sections** to your Reaper charts with the click of a button. You can also add text events like **[music_start]**, **[music_end]**, **[end]**, or any Crowd Clapping event too!
+
+**<ins>All buttons create markers or text events at the current play head position</ins>**.
+
+This project is a fork of EVENT Tools (https://github.com/RaiderGG/EVENTS-Tools).
   
-![image](https://github.com/user-attachments/assets/b61dac68-d327-4e99-b04e-a7a43868f3e6)
+<img width="1220" height="680" alt="EVENT Tools - Main Window" src="https://github.com/user-attachments/assets/f724c968-542e-4dde-bea4-567b01360402" />
   
 ## **Requirements**  
-The only thing you'll need to have installed is **ReaImGui**. You can install it via **ReaPack**.  
-you can find it here! https://reapack.com/  
-  
-## Markers and practice sections tools  
-Here you'll find the Markers to Sections tool, i'm looking to add a Delete Sections tool too.  
-  
-### Markers to sections  
-This tool is self-explainable. It copys Reaper markers and adds them into the EVENTS track as Text Events with the proper **[prc_(section)]** format.  
-  
-![image](https://github.com/user-attachments/assets/36a21f33-ed87-4c44-83f0-6319342263ff)
+Event Tools requires **ReaImGui**. You can install it via **ReaPack** (https://reapack.com/).
+
+## Adding Practice Section Markers
+Practice section buttons are arranged in a logical order. Position the playhead where you want to create a marker and then click a practice section button. A color coded marker is created and the button changes color to match the marker. This gives you a visual map to refer to so that you know which markers you have already placed.
+
+<img width="1514" height="796" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/5fa3fa20-1020-44bd-bafd-61ac631342ba" />
+
+## Convert Practice Section Markers to EVENTS Track Text Eevenst
+
+When you have created all your practice section markers, click the "Copy Markers to EVENTS Track" button. This will convert your markers to text events in the EVENTS Track. Markers are converted to the proper **[prc_(section)]** format. 
+
+<img width="1553" height="822" alt="EVENT Tools - Create Practice Section Text Events" src="https://github.com/user-attachments/assets/709910b0-545c-40d4-ad74-66fa4c278fdf" />
   
 ## Music events  
-Here you'll find the tools to add [music_start], [music_end], and [end] events. They're placed at the Play Cursor's position.  
+Add [music_start], [music_end], and [end]  text events. (EVENTS track only).
   
-![image](https://github.com/user-attachments/assets/5b021182-1163-4fbb-b382-dbfac349d4b0)  
+<img width="1221" height="330" alt="Music Events" src="https://github.com/user-attachments/assets/f7ca9c86-cb54-4d5b-bdb4-ed0793025e80" />
 
 ## Crowd Clap  
-These tools allow you to activate or deactivating the crowd's claps. They work exactly as the Music events tools.  
+Activate or deactivate the crowd's claps. (EVENTS track only).
   
-![image](https://github.com/user-attachments/assets/e91a72f3-82d9-4428-ae78-408426d0c1e4)
+<img width="1221" height="330" alt="Crowd Clap" src="https://github.com/user-attachments/assets/ac497e16-c2eb-4519-875e-2c227b277e54" />
   
 ## Crowd intensity  
-You can change the intensity of the crowd between **mellow**, **normal**, **intense**, or **realtime**.  
+Change the intensity of the crowd between **mellow**, **normal**, **intense**, or **realtime**. (EVENTS track only).
   
-![image](https://github.com/user-attachments/assets/6ef45ae0-4588-499d-9585-73086225fd4a)
+<img width="1221" height="330" alt="Crowd Intensity" src="https://github.com/user-attachments/assets/2ff85b9f-96e8-4bd3-8b03-4cac840a2b26" />
