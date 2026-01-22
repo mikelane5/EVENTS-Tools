@@ -36,3 +36,33 @@ Activate or deactivate the crowd's claps. (EVENTS track only).
 Change the intensity of the crowd between **mellow**, **normal**, **intense**, or **realtime**. (EVENTS track only).
   
 <img width="1221" height="330" alt="Crowd Intensity" src="https://github.com/user-attachments/assets/2ff85b9f-96e8-4bd3-8b03-4cac840a2b26" />
+
+## Installation
+**Note**: EVENT Tools reqiures a modern version of Reaper to run. 
+
+Download and extract files to your Reaper Scripts folder (C:\Users\<username>\AppData\Roaming\REAPER\Scripts\EventsTools).
+
+**Note**: You need to have hidden items enabled in **File Explorer** to access the AppData folder. In File Explorer click **View** > **Show** > **Hidden Items**. 
+
+<img width="790" height="569" alt="Windows Explorer" src="https://github.com/user-attachments/assets/f2029a33-8b1c-40ed-b36b-2e6980954177" />
+
+In Reaper, click **Actions** > **Show action list**.
+
+In the **Actions** window Click the **New action** button, then click **Load ReaScript**.
+
+<img width="617" height="482" alt="Load ReaScript" src="https://github.com/user-attachments/assets/71760608-df0c-4fe3-8e26-1ed3ca8aad98" />
+
+Browse to C:\Users\<username>\AppData\Roaming\REAPER\Scripts\EventsTools. Select **Events Toola.lua** and then click the **Open** button.
+
+In the **Actions** window, select **Script: Events Tools.lua** from the list. Click the **Add** button. The **Keyboard/MIDI/OSC Input** window will open. Press the **F7** key. Click the **OK** button.
+
+<img width="933" height="437" alt="Assign Shortcut" src="https://github.com/user-attachments/assets/485b7741-db10-4ee5-b98c-93e0c21b19e4" />
+
+Click the **Close** button in the **Actions** window.
+
+Installation is now complete. 
+
+Launch EVENT Tools by pressing the **F7** key.
+
+
+
