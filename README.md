@@ -6,7 +6,7 @@ Event Tools helps you add common **Practice Sections** to your Reaper charts wit
 
 This project is a fork of EVENT Tools (https://github.com/RaiderGG/EVENTS-Tools).
   
-<img width="1220" height="680" alt="EVENT Tools - Main Window" src="https://github.com/user-attachments/assets/f724c968-542e-4dde-bea4-567b01360402" />
+<img width="1219" height="723" alt="EVENT Tools - Main Window" src="https://github.com/user-attachments/assets/041e751c-64d9-4423-a841-a0893b0526d9" />
   
 ## **Requirements**  
 Event Tools requires **ReaImGui**. You can install it via **ReaPack** (https://reapack.com/).
@@ -14,28 +14,34 @@ Event Tools requires **ReaImGui**. You can install it via **ReaPack** (https://r
 ## Adding Practice Section Markers
 Practice section buttons are arranged in a logical order. Position the playhead where you want to create a marker and then click a practice section button. A color coded marker is created and the button changes color to match the marker. This gives you a visual map to refer to so that you know which markers you have already placed.
 
-<img width="1514" height="796" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/5fa3fa20-1020-44bd-bafd-61ac631342ba" />
+<img width="1440" height="769" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/a9e9d1d6-e030-4fc3-a5f5-fa658e1cad86" />
+
 
 ## Convert Practice Section Markers to EVENTS Track Text Eevenst
 
 When you have created all your practice section markers, click the "Copy Markers to EVENTS Track" button. This will convert your markers to text events in the EVENTS Track. Markers are converted to the proper **[prc_(section)]** format. 
 
-<img width="1553" height="822" alt="EVENT Tools - Create Practice Section Text Events" src="https://github.com/user-attachments/assets/709910b0-545c-40d4-ad74-66fa4c278fdf" />
-  
+  <img width="1291" height="930" alt="EVENT Tools - Create Practice Section Text Events" src="https://github.com/user-attachments/assets/31f919c5-4d6d-4134-b9f2-1a1ef81be55d" />
+
 ## Music events  
 Add [music_start], [music_end], and [end]  text events. (EVENTS track only).
   
-<img width="1221" height="330" alt="Music Events" src="https://github.com/user-attachments/assets/f7ca9c86-cb54-4d5b-bdb4-ed0793025e80" />
+<img width="1219" height="407" alt="Music Events" src="https://github.com/user-attachments/assets/a0cdb5e0-f950-4590-8991-d6d79c8d18cf" />
 
 ## Crowd Clap  
 Activate or deactivate the crowd's claps. (EVENTS track only).
   
-<img width="1221" height="330" alt="Crowd Clap" src="https://github.com/user-attachments/assets/ac497e16-c2eb-4519-875e-2c227b277e54" />
-  
+<img width="1219" height="407" alt="Crowd Clap" src="https://github.com/user-attachments/assets/449a9de0-4121-4351-aa5a-a8cd62740ce7" />
+
 ## Crowd intensity  
 Change the intensity of the crowd between **mellow**, **normal**, **intense**, or **realtime**. (EVENTS track only).
   
-<img width="1221" height="330" alt="Crowd Intensity" src="https://github.com/user-attachments/assets/2ff85b9f-96e8-4bd3-8b03-4cac840a2b26" />
+<img width="1219" height="407" alt="Crowd Intensity" src="https://github.com/user-attachments/assets/6e5ed6cd-02fc-49c7-a4b8-98d0170413c9" />
+
+## Undocumented Text Events
+Add undocumented crowd events for special situations. These special events turn crowd fists, horns, and lighters on and off. Each state must be turned on and off, so each pair of buttons is color coded with counters. An orange button shows a missing text event. 
+
+<img width="1219" height="407" alt="Undocumented Events" src="https://github.com/user-attachments/assets/a0498570-2512-428b-b936-8c7c5a43eee8" />
 
 ## Installation
 **Note**: EVENT Tools reqiures a modern version of Reaper to run. 
@@ -44,7 +50,7 @@ Download and extract files to your Reaper Scripts folder (C:\Users\<username>\Ap
 
 **Note**: You need to have hidden items enabled in **File Explorer** to access the AppData folder. In File Explorer click **View** > **Show** > **Hidden Items**. 
 
-<img width="790" height="569" alt="Windows Explorer" src="https://github.com/user-attachments/assets/f2029a33-8b1c-40ed-b36b-2e6980954177" />
+<img width="810" height="780" alt="Windows Explorer" src="https://github.com/user-attachments/assets/e48f59e4-1475-4202-8b28-e36c78839dc2" />
 
 In Reaper, click **Actions** > **Show action list**.
 
