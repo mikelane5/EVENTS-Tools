@@ -18,6 +18,12 @@ local CrowdMellow = require "CrowdMellow"
 local CrowdNormal = require "CrowdNormal"
 local CrowdIntense = require "CrowdIntense"
 local CrowdRealtime = require "CrowdRealtime"
+local CrowdFistsOn = require "CrowdFistsOn"
+local CrowdFistsOff = require "CrowdFistsOff"
+local CrowdHornsOn = require "CrowdHornsOn"
+local CrowdHornsOff = require "CrowdHornsOff"
+local CrowdLightersOn = require "CrowdLightersOn"
+local CrowdLightersOff = require "CrowdLightersOff"
 
 -- Load marker colors from MarkerUtils
 local MARKER_COLORS = {
@@ -100,17 +106,186 @@ local function ColoredButton(label, id, markerName, width, height)
     return clicked
 end
 
+-- Crowd state pairs to track
+local CROWD_PAIRS = {
+    { on = "crowd_fists_on",    off = "crowd_fists_off" },
+    { on = "crowd_horns_on",    off = "crowd_horns_off" },
+    { on = "crowd_lighters_on", off = "crowd_lighters_off" },
+}
+
+-- Scan the EVENTS track MIDI for crowd state text events
+-- Returns a table keyed by event name, e.g. { crowd_fists_on = 3, crowd_fists_off = 2 }
+local function ScanCrowdEvents()
+    local counts = {}
+    local track_name = "EVENTS"
+    local track = nil
+
+    for i = 0, reaper.CountTracks(0) - 1 do
+        local current_track = reaper.GetTrack(0, i)
+        local _, name = reaper.GetTrackName(current_track)
+        if name == track_name then
+            track = current_track
+            break
+        end
+    end
+
+    if not track then 
+        return counts 
+    end
+
+    -- Find the MIDI item
+    local midi_item = nil
+    for i = 0, reaper.CountTrackMediaItems(track) - 1 do
+        local item = reaper.GetTrackMediaItem(track, i)
+        local take = reaper.GetActiveTake(item)
+        if take and reaper.TakeIsMIDI(take) then
+            midi_item = item
+            break
+        end
+    end
+
+    if not midi_item then 
+        return counts 
+    end
+
+    local take = reaper.GetActiveTake(midi_item)
+    
+    -- Sort MIDI to ensure all events are visible
+    reaper.MIDI_Sort(take)
+
+    -- Try getting the entire MIDI data as a string and searching for our events
+    local _, midi_string = reaper.MIDI_GetAllEvts(take, "")
+    
+    -- Search for our crowd state text in the raw MIDI data
+    for _, pair in ipairs(CROWD_PAIRS) do
+        local on_pattern = "%[" .. pair.on .. "%]"
+        local off_pattern = "%[" .. pair.off .. "%]"
+        
+        -- Count occurrences
+        local on_count = 0
+        for match in midi_string:gmatch(on_pattern) do
+            on_count = on_count + 1
+        end
+        
+        local off_count = 0
+        for match in midi_string:gmatch(off_pattern) do
+            off_count = off_count + 1
+        end
+        
+        if on_count > 0 then
+            counts[pair.on] = on_count
+        end
+        if off_count > 0 then
+            counts[pair.off] = off_count
+        end
+    end
+
+    return counts
+end
+
+-- Determine button state for each pair based on event counts
+-- Returns: "green", "orange", or nil (default)
+local function GetPairButtonStates(counts, pair)
+    local on_count  = counts[pair.on]  or 0
+    local off_count = counts[pair.off] or 0
+
+    if on_count == 0 and off_count == 0 then
+        -- No events at all — both default
+        return nil, nil
+    elseif on_count == off_count then
+        -- Properly paired — both green
+        return "green", "green"
+    elseif on_count > off_count then
+        -- Unclosed _on — on is green, off is orange
+        return "green", "orange"
+    else
+        -- Orphan _off — off is green, on is orange
+        return "orange", "green"
+    end
+end
+
+-- Colors
+local COLOR_GREEN  = 0x00CC00FF
+local COLOR_ORANGE = 0xFF8C00FF
+local COLOR_BADGE  = 0xFF3333FF  -- red badge background
+local COLOR_BADGE_TEXT = 0xFFFFFFFF
+
+-- Draw a crowd state button with color state and a badge counter in the top-right corner
+local function CrowdStateButton(label, id, count, state)
+    local width, height = 143, 30
+
+    -- Push button color based on state
+    local color_pushed = false
+    if state == "green" then
+        ImGui.PushStyleColor(ctx, ImGui.Col_Button, COLOR_GREEN)
+        ImGui.PushStyleColor(ctx, ImGui.Col_Text, 0x000000FF)
+        color_pushed = true
+    elseif state == "orange" then
+        ImGui.PushStyleColor(ctx, ImGui.Col_Button, COLOR_ORANGE)
+        ImGui.PushStyleColor(ctx, ImGui.Col_Text, 0x000000FF)
+        color_pushed = true
+    end
+
+    -- Record cursor position before drawing the button (for badge overlay)
+    local btn_x, btn_y = ImGui.GetCursorPos(ctx)
+
+    local clicked = ImGui.Button(ctx, label .. id, width, height)
+
+    -- Pop colors
+    if color_pushed then
+        ImGui.PopStyleColor(ctx)  -- text
+        ImGui.PopStyleColor(ctx)  -- button
+    end
+
+    -- Draw badge if count > 0
+    if count and count > 0 then
+        local badge_text = tostring(count)
+        local badge_w, badge_h = ImGui.CalcTextSize(ctx, badge_text)
+        local padding = 4
+        badge_w = badge_w + padding * 2
+        badge_h = badge_h + padding * 2
+
+        -- Position badge in top-right corner of the button
+        local badge_x = btn_x + width - badge_w - 2
+        local badge_y = btn_y - 2
+
+        -- Draw badge background (filled rect)
+        local draw = ImGui.GetWindowDrawList(ctx)
+        local wx, wy = ImGui.GetWindowPos(ctx)
+        ImGui.DrawList_AddRectFilled(draw,
+            wx + badge_x, wy + badge_y,
+            wx + badge_x + badge_w, wy + badge_y + badge_h,
+            COLOR_BADGE, 8)
+
+        -- Draw badge text centered in the badge rect
+        ImGui.DrawList_AddText(draw,
+            wx + badge_x + padding,
+            wy + badge_y + padding,
+            COLOR_BADGE_TEXT, badge_text)
+    end
+
+    return clicked
+end
+
 -- Reposition Window if it goes offscreen in virtual machine after sleep
 -- reaper.ImGui_SetNextWindowPos(ctx, 100, 100, reaper.ImGui_Cond_Always())
 
 -- Main GUI loop
 local function loop()
-    ImGui.SetNextWindowSize(ctx, 1220, 680, ImGui.Cond_Always)
+    ImGui.SetNextWindowSize(ctx, 1220, 724, ImGui.Cond_FirstUseEver)
     local visible, open = ImGui.Begin(ctx, 'EVENTS Tools', true)
     if visible then
 
+        -- Scan MIDI track each frame for crowd state tracking
+        local crowd_counts = ScanCrowdEvents()
+        local crowd_states = {}
+        for _, pair in ipairs(CROWD_PAIRS) do
+            local on_state, off_state = GetPairButtonStates(crowd_counts, pair)
+            crowd_states[pair.on]  = { state = on_state,  count = crowd_counts[pair.on]  or 0 }
+            crowd_states[pair.off] = { state = off_state, count = crowd_counts[pair.off] or 0 }
+        end
 
-        ImGui.Text(ctx, 'Common Practice Section Markers')
+        ImGui.SeparatorText(ctx, 'Common Practice Section Markers')
 	
 --Intro Practice Section Markers
 	
@@ -1231,7 +1406,7 @@ local function loop()
 
 -- Marker tools section
 
-        ImGui.Text(ctx, 'EVENTS Track Tools')
+        ImGui.SeparatorText(ctx, 'EVENTS Track Tools')
 
         -- Button for "Markers to Sections"
         if ImGui.Button(ctx, 'Copy Markers to EVENTS Track', 294, 30) then
@@ -1239,7 +1414,7 @@ local function loop()
         end
 
 		-- Music events section
-        ImGui.SeparatorText(ctx,'Music Events')
+        ImGui.Text(ctx, 'Music Events')
 
         if ImGui.Button(ctx, 'Add Music Start', 143, 30) then
             MusicStart()
@@ -1259,7 +1434,7 @@ local function loop()
         end
 
 		-- Crowd clap section
-        ImGui.SeparatorText(ctx,'Crowd Clap')
+        ImGui.Text(ctx, 'Crowd Clap')
 
         if ImGui.Button(ctx, 'Add Crowd Clap', 143, 30) then
             CrowdClap()
@@ -1272,7 +1447,7 @@ local function loop()
         end
 
 		-- Crowd clap section
-        ImGui.SeparatorText(ctx,'Crowd intensity')
+        ImGui.Text(ctx, 'Crowd intensity')
 
         if ImGui.Button(ctx, 'Crowd Mellow', 143, 30) then
             CrowdMellow()
@@ -1294,6 +1469,42 @@ local function loop()
 
 		if ImGui.Button(ctx, 'Crowd Realtime', 143, 30) then
             CrowdRealtime()
+        end
+
+        ImGui.Text(ctx, 'Undocumented Crowd States')
+
+        if CrowdStateButton('Crowd Fists On', '##cfo', crowd_states["crowd_fists_on"].count, crowd_states["crowd_fists_on"].state) then
+            CrowdFistsOn()
+        end
+
+		ImGui.SameLine(ctx)
+
+        if CrowdStateButton('Crowd Fists Off', '##cfoff', crowd_states["crowd_fists_off"].count, crowd_states["crowd_fists_off"].state) then
+            CrowdFistsOff()
+        end
+
+		ImGui.SameLine(ctx)
+
+        if CrowdStateButton('Crowd Horns On', '##cho', crowd_states["crowd_horns_on"].count, crowd_states["crowd_horns_on"].state) then
+            CrowdHornsOn()
+        end
+
+		ImGui.SameLine(ctx)
+
+        if CrowdStateButton('Crowd Horns Off', '##choff', crowd_states["crowd_horns_off"].count, crowd_states["crowd_horns_off"].state) then
+            CrowdHornsOff()
+        end
+
+		ImGui.SameLine(ctx)
+
+        if CrowdStateButton('Crowd Lighters On', '##clo', crowd_states["crowd_lighters_on"].count, crowd_states["crowd_lighters_on"].state) then
+            CrowdLightersOn()
+        end
+
+		ImGui.SameLine(ctx)
+
+        if CrowdStateButton('Crowd Lighters Off', '##cloff', crowd_states["crowd_lighters_off"].count, crowd_states["crowd_lighters_off"].state) then
+            CrowdLightersOff()
         end
 
         -- Finalizing the window
