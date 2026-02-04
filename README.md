@@ -9,7 +9,10 @@ This project is a fork of EVENT Tools (https://github.com/RaiderGG/EVENTS-Tools)
 <img width="1219" height="723" alt="EVENT Tools - Main Window" src="https://github.com/user-attachments/assets/041e751c-64d9-4423-a841-a0893b0526d9" />
   
 ## **Requirements**  
-Event Tools requires **ReaImGui**. You can install it via **ReaPack** (https://reapack.com/).
+The simplest way to get scripts working in Reaper is to follow the Milohax Reaper setup guide here: https://guides.milohax.org/en/charting/reaper/. This guide includes installing the SWS Extensions and includes the other files that you need.
+Otherwise you need to install SWS Extensions, ReaPack, and Realmgui manually. Note: You can install RealmGui via ReaPack.
+https://sws-extension.org/
+https://reapack.com/
 
 ## Adding Practice Section Markers
 Practice section buttons are arranged in a logical order. Position the playhead where you want to create a marker and then click a practice section button. A color coded marker is created and the button changes color to match the marker. This gives you a visual map to refer to so that you know which markers you have already placed.
