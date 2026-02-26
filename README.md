@@ -20,7 +20,7 @@ Practice section buttons are arranged in a logical order. Position the playhead 
 <img width="1440" height="769" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/a9e9d1d6-e030-4fc3-a5f5-fa658e1cad86" />
 
 
-## Convert Practice Section Markers to EVENTS Track Text Eevenst
+## Convert Practice Section Markers to EVENTS Track Text Events
 
 When you have created all your practice section markers, click the "Copy Markers to EVENTS Track" button. This will convert your markers to text events in the EVENTS Track. Markers are converted to the proper **[prc_(section)]** format. 
 
