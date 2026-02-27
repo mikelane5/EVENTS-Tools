@@ -17,14 +17,13 @@ https://reapack.com/
 ## Adding Practice Section Markers
 Practice section buttons are arranged in a logical order. Position the playhead where you want to create a marker and then click a practice section button. A color coded marker is created and the button changes color to match the marker. This gives you a visual map to refer to so that you know which markers you have already placed.
 
-<img width="1440" height="769" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/a9e9d1d6-e030-4fc3-a5f5-fa658e1cad86" />
-
+<img width="1440" height="507" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/904d5d8c-430b-43df-9bf4-703b0e7af784" />
 
 ## Convert Practice Section Markers to EVENTS Track Text Events
 
 When you have created all your practice section markers, click the "Copy Markers to EVENTS Track" button. This will convert your markers to text events in the EVENTS Track. Markers are converted to the proper **[prc_(section)]** format. 
 
-  <img width="1291" height="930" alt="EVENT Tools - Create Practice Section Text Events" src="https://github.com/user-attachments/assets/31f919c5-4d6d-4134-b9f2-1a1ef81be55d" />
+<img width="1291" height="388" alt="EVENT Tools - Create Practice Section Text Events" src="https://github.com/user-attachments/assets/95dd3e87-e153-4fda-a77f-f4a8fd404402" />
 
 ## Music events  
 Add [music_start], [music_end], and [end]  text events. (EVENTS track only).
