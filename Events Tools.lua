@@ -113,6 +113,248 @@ local CROWD_PAIRS = {
     { on = "crowd_lighters_on", off = "crowd_lighters_off" },
 }
 
+-- Load practice section list from file
+local PRACTICE_SECTIONS = {}  -- ALL practice sections for validation
+local PRACTICE_SECTIONS_DISPLAY = {}  -- Filtered for dropdown display
+local PRACTICE_SECTIONS_DISPLAY_NAMES = {}  -- Display names for dropdown
+local function LoadPracticeSections()
+    local file_path = reaper.GetResourcePath() .. "/Scripts/EventsTools/practice_section_list.txt"
+    local file = io.open(file_path, "r")
+    
+    if not file then
+        reaper.ShowConsoleMsg("Warning: practice_section_list.txt not found\n")
+        return
+    end
+    
+    -- Build set of existing button markers to filter from dropdown only
+    local existing_buttons = {
+        intro=true, intro_a=true, intro_b=true, intro_c=true, intro_d=true,
+        preverse_1=true, preverse_1a=true, preverse_1b=true, preverse_1c=true, preverse_1d=true,
+        preverse_2=true, preverse_2a=true, preverse_2b=true, preverse_2c=true, preverse_2d=true,
+        preverse_3=true, preverse_3a=true, preverse_3b=true, preverse_3c=true, preverse_3d=true,
+        preverse_4=true, preverse_4a=true, preverse_4b=true, preverse_4c=true, preverse_4d=true,
+        verse_1=true, verse_1a=true, verse_1b=true, verse_1c=true, verse_1d=true,
+        verse_2=true, verse_2a=true, verse_2b=true, verse_2c=true, verse_2d=true,
+        verse_3=true, verse_3a=true, verse_3b=true, verse_3c=true, verse_3d=true,
+        verse_4=true, verse_4a=true, verse_4b=true, verse_4c=true, verse_4d=true,
+        postverse_1=true, postverse_1a=true, postverse_1b=true, postverse_1c=true, postverse_1d=true,
+        postverse_2=true, postverse_2a=true, postverse_2b=true, postverse_2c=true, postverse_2d=true,
+        postverse_3=true, postverse_3a=true, postverse_3b=true, postverse_3c=true, postverse_3d=true,
+        postverse_4=true, postverse_4a=true, postverse_4b=true, postverse_4c=true, postverse_4d=true,
+        prechorus_1=true, prechorus_1a=true, prechorus_1b=true, prechorus_1c=true, prechorus_1d=true,
+        prechorus_2=true, prechorus_2a=true, prechorus_2b=true, prechorus_2c=true, prechorus_2d=true,
+        prechorus_3=true, prechorus_3a=true, prechorus_3b=true, prechorus_3c=true, prechorus_3d=true,
+        prechorus_4=true, prechorus_4a=true, prechorus_4b=true, prechorus_4c=true, prechorus_4d=true,
+        chorus_1=true, chorus_1a=true, chorus_1b=true, chorus_1c=true, chorus_1d=true,
+        chorus_2=true, chorus_2a=true, chorus_2b=true, chorus_2c=true, chorus_2d=true,
+        chorus_3=true, chorus_3a=true, chorus_3b=true, chorus_3c=true, chorus_3d=true,
+        chorus_4=true, chorus_4a=true, chorus_4b=true, chorus_4c=true, chorus_4d=true,
+        postchorus_1=true, postchorus_1a=true, postchorus_1b=true, postchorus_1c=true, postchorus_1d=true,
+        postchorus_2=true, postchorus_2a=true, postchorus_2b=true, postchorus_2c=true, postchorus_2d=true,
+        postchorus_3=true, postchorus_3a=true, postchorus_3b=true, postchorus_3c=true, postchorus_3d=true,
+        postchorus_4=true, postchorus_4a=true, postchorus_4b=true, postchorus_4c=true, postchorus_4d=true,
+        main_1=true, main_1a=true, main_1b=true, main_1c=true, main_1d=true,
+        main_2=true, main_2a=true, main_2b=true, main_2c=true, main_2d=true,
+        main_3=true, main_3a=true, main_3b=true, main_3c=true, main_3d=true,
+        main_4=true, main_4a=true, main_4b=true, main_4c=true, main_4d=true,
+        bridge_1=true, bridge_1a=true, bridge_1b=true, bridge_1c=true, bridge_1d=true,
+        bridge_2=true, bridge_2a=true, bridge_2b=true, bridge_2c=true, bridge_2d=true,
+        bridge_3=true, bridge_3a=true, bridge_3b=true, bridge_3c=true, bridge_3d=true,
+        bridge_4=true, bridge_4a=true, bridge_4b=true, bridge_4c=true, bridge_4d=true,
+        gtr_solo_1=true, gtr_solo_1a=true, gtr_solo_1b=true, gtr_solo_1c=true, gtr_solo_1d=true,
+        gtr_solo_2=true, gtr_solo_2a=true, gtr_solo_2b=true, gtr_solo_2c=true, gtr_solo_2d=true,
+        gtr_solo_3=true, gtr_solo_3a=true, gtr_solo_3b=true, gtr_solo_3c=true, gtr_solo_3d=true,
+        gtr_solo_4=true, gtr_solo_4a=true, gtr_solo_4b=true, gtr_solo_4c=true, gtr_solo_4d=true,
+        bass_solo_1=true, bass_solo_1a=true, bass_solo_1b=true, bass_solo_1c=true, bass_solo_1d=true,
+        drum_solo_1=true, drum_solo_1a=true, drum_solo_1b=true, drum_solo_1c=true, drum_solo_1d=true,
+        keyboard_solo_1=true, keyboard_solo_1a=true, keyboard_solo_1b=true, keyboard_solo_1c=true, keyboard_solo_1d=true,
+        outro=true, outro_a=true, outro_b=true, outro_c=true, outro_d=true,
+        outro_chorus=true, outro_chorus_a=true, outro_chorus_b=true, outro_chorus_c=true, outro_chorus_d=true,
+    }
+    
+    for line in file:lines() do
+        -- Parse: [prc_marker_name] "Display Name"
+        local marker_name, display_name = line:match('%[prc_(.-)%]%s*"(.-)"')
+        if marker_name and display_name then
+            -- Add ALL to validation list
+            table.insert(PRACTICE_SECTIONS, marker_name)
+            
+            -- Only add to dropdown if not an existing button
+            if not existing_buttons[marker_name] then
+                table.insert(PRACTICE_SECTIONS_DISPLAY, marker_name)
+                table.insert(PRACTICE_SECTIONS_DISPLAY_NAMES, display_name)
+            end
+        end
+    end
+    
+    file:close()
+end
+
+-- Load the practice sections on startup
+LoadPracticeSections()
+
+-- Clipboard for copied markers
+local copied_markers = {}  -- Stores {name, relative_time} for each copied marker
+local clipboard_display = "No markers copied"
+
+-- Helper function: Get the base name and number from a marker
+-- e.g., "verse_1a" -> base="verse", num=1, suffix="a"
+local function ParseMarkerName(name)
+    local base, num, suffix = name:match("^(.-)_(%d+)(.*)$")
+    if base and num then
+        return base, tonumber(num), suffix
+    end
+    -- Handle markers without numbers (e.g., "intro")
+    local base_only = name:match("^([^_]+)$")
+    if base_only then
+        return base_only, nil, ""
+    end
+    return nil, nil, ""
+end
+
+-- Helper function: Find highest existing number for a base marker type in timeline
+local function GetMaxMarkerNumber(base_name)
+    local max_num = 0
+    local num_markers = reaper.CountProjectMarkers(0)
+    
+    for i = 0, num_markers - 1 do
+        local retval, isrgn, pos, rgnend, name, markrgnindexnumber = reaper.EnumProjectMarkers(i)
+        if not isrgn then
+            local marker_base, marker_num, marker_suffix = ParseMarkerName(name)
+            if marker_base == base_name and marker_num and marker_num > max_num then
+                max_num = marker_num
+            end
+        end
+    end
+    
+    return max_num
+end
+
+-- Helper function: Check if a marker name exists in the master practice sections list
+local function IsValidPracticeSection(name)
+    for i = 1, #PRACTICE_SECTIONS do
+        if PRACTICE_SECTIONS[i] == name then
+            return true
+        end
+    end
+    return false
+end
+
+-- Copy markers from timeline selection
+local function CopyMarkers()
+    local start_time, end_time = reaper.GetSet_LoopTimeRange(false, false, 0, 0, false)
+    
+    if start_time == end_time then
+        reaper.ShowMessageBox("No timeline selection found.", "Error", 0)
+        return
+    end
+    
+    -- Collect all markers within the time selection
+    local markers_in_selection = {}
+    local num_markers = reaper.CountProjectMarkers(0)
+    
+    for i = 0, num_markers - 1 do
+        local retval, isrgn, pos, rgnend, name, markrgnindexnumber = reaper.EnumProjectMarkers(i)
+        if not isrgn and pos >= start_time and pos <= end_time then
+            table.insert(markers_in_selection, {name = name, time = pos})
+        end
+    end
+    
+    if #markers_in_selection == 0 then
+        reaper.ShowMessageBox("No practice section markers found in timeline selection.", "Error", 0)
+        copied_markers = {}
+        clipboard_display = "No markers copied"
+        return
+    end
+    
+    -- Sort by time
+    table.sort(markers_in_selection, function(a, b) return a.time < b.time end)
+    
+    -- Calculate relative times (relative to first marker)
+    local first_time = markers_in_selection[1].time
+    copied_markers = {}
+    
+    for i, marker in ipairs(markers_in_selection) do
+        table.insert(copied_markers, {
+            name = marker.name,
+            relative_time = marker.time - first_time
+        })
+    end
+    
+    -- Update display text
+    local first_name = markers_in_selection[1].name
+    local last_name = markers_in_selection[#markers_in_selection].name
+    clipboard_display = string.format("Practice section markers selected: %d markers from %s to %s", 
+                                      #markers_in_selection, first_name, last_name)
+end
+
+-- Paste markers at cursor with smart incrementing
+local function PasteMarkers()
+    if #copied_markers == 0 then
+        reaper.ShowMessageBox("No markers in clipboard. Use 'Copy Markers' first.", "Error", 0)
+        return
+    end
+    
+    local cursor_pos = reaper.GetCursorPosition()
+    
+    -- Build increment map: for each base marker type, find the next available number
+    local increment_map = {}
+    
+    for _, marker in ipairs(copied_markers) do
+        local base, num, suffix = ParseMarkerName(marker.name)
+        
+        if base and num then
+            -- Only calculate once per base type
+            if not increment_map[base] then
+                local max_existing = GetMaxMarkerNumber(base)
+                increment_map[base] = max_existing + 1
+            end
+        end
+    end
+    
+    -- Paste markers with incremented names
+    local markers_to_create = {}
+    
+    for _, marker in ipairs(copied_markers) do
+        local base, num, suffix = ParseMarkerName(marker.name)
+        
+        if base and num then
+            -- Increment the number
+            local new_num = num + (increment_map[base] - num)
+            local new_name = base .. "_" .. new_num .. suffix
+            
+            -- Check if new name exists in master list
+            if not IsValidPracticeSection(new_name) then
+                reaper.ShowMessageBox(
+                    string.format("Cannot paste: '%s' exceeds master practice section list.\n\nPaste aborted.", new_name),
+                    "Error", 0)
+                return
+            end
+            
+            table.insert(markers_to_create, {
+                name = new_name,
+                time = cursor_pos + marker.relative_time
+            })
+        else
+            -- Marker without number pattern, paste as-is
+            table.insert(markers_to_create, {
+                name = marker.name,
+                time = cursor_pos + marker.relative_time
+            })
+        end
+    end
+    
+    -- Create all markers
+    for _, m in ipairs(markers_to_create) do
+        reaper.SetEditCurPos(m.time, false, false)
+        AddMarker(m.name)
+    end
+    
+    -- Restore cursor to original position
+    reaper.SetEditCurPos(cursor_pos, false, false)
+    reaper.UpdateArrange()
+end
+
 -- Scan the EVENTS track MIDI for crowd state text events
 -- Returns a table keyed by event name, e.g. { crowd_fists_on = 3, crowd_fists_off = 2 }
 local function ScanCrowdEvents()
@@ -271,8 +513,12 @@ end
 -- reaper.ImGui_SetNextWindowPos(ctx, 100, 100, reaper.ImGui_Cond_Always())
 
 -- Main GUI loop
+local practice_filter = ""  -- Search filter text
+local filtered_indices = {} -- Indices of filtered practice sections
+local selected_practice = -1 -- Currently selected item (-1 = none)
+
 local function loop()
-    ImGui.SetNextWindowSize(ctx, 1220, 724, ImGui.Cond_FirstUseEver)
+    ImGui.SetNextWindowSize(ctx, 1220, 875, ImGui.Cond_FirstUseEver)
     local visible, open = ImGui.Begin(ctx, 'EVENTS Tools', true)
     if visible then
 
@@ -1403,6 +1649,108 @@ local function loop()
 		if ColoredButton('d', '##oc1d', 'outro_chorus_d', 30, 30) then
 		    AddMarker('outro_chorus_d')
 		end
+
+       		 	-- Spacer
+	     		ImGui.SameLine(ctx)
+
+-- Practice Section Dropdown
+
+        -- Update filtered list based on search
+        if practice_filter == "" then
+            -- No filter - show all dropdown items
+            filtered_indices = {}
+            for i = 1, #PRACTICE_SECTIONS_DISPLAY do
+                filtered_indices[i] = i
+            end
+        else
+            -- Filter based on search text (case-insensitive)
+            filtered_indices = {}
+            local filter_lower = practice_filter:lower()
+            for i = 1, #PRACTICE_SECTIONS_DISPLAY_NAMES do
+                if PRACTICE_SECTIONS_DISPLAY_NAMES[i]:lower():find(filter_lower, 1, true) then
+                    table.insert(filtered_indices, i)
+                end
+            end
+        end
+
+        -- Search input box (30px tall with placeholder)
+        ImGui.PushStyleVar(ctx, ImGui.StyleVar_FramePadding, 4, 9)
+        ImGui.SetNextItemWidth(ctx, 295)
+        local changed, new_filter = ImGui.InputTextWithHint(ctx, '##prc_search', 'Search', practice_filter, ImGui.InputTextFlags_AutoSelectAll)
+        ImGui.PopStyleVar(ctx)
+        if changed then
+            practice_filter = new_filter
+            selected_practice = -1
+        end
+
+        -- Create invisible spacer row to match outro button pattern
+        -- This ensures dropdown aligns with search box above
+        -- First set: matches "Outro Chorus" main button + 4 sub-buttons
+        ImGui.Dummy(ctx, 143, 0)  -- Main button width
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)   -- Sub-button width
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        
+        -- Second set: matches "Outro" main button + 4 sub-buttons
+        ImGui.Dummy(ctx, 143, 0)  -- Main button width
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)   -- Sub-button width
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        ImGui.Dummy(ctx, 30, 0)
+        ImGui.SameLine(ctx)
+        
+        -- Combo box with filtered results (30px tall) - now aligned
+        ImGui.PushStyleVar(ctx, ImGui.StyleVar_FramePadding, 4, 9)
+        ImGui.SetNextItemWidth(ctx, 295)
+        local preview = selected_practice >= 0 and PRACTICE_SECTIONS_DISPLAY_NAMES[selected_practice] or "Select Practice Section..."
+        
+        if ImGui.BeginCombo(ctx, '##prc_combo', preview, ImGui.ComboFlags_HeightLarge) then
+            ImGui.PopStyleVar(ctx)
+            -- Show filtered items
+            for _, idx in ipairs(filtered_indices) do
+                local is_selected = (selected_practice == idx)
+                if ImGui.Selectable(ctx, PRACTICE_SECTIONS_DISPLAY_NAMES[idx], is_selected) then
+                    selected_practice = idx
+                    -- Auto-create marker when selected (use marker name, not display name)
+                    AddMarker(PRACTICE_SECTIONS_DISPLAY[idx])
+                end
+                if is_selected then
+                    ImGui.SetItemDefaultFocus(ctx)
+                end
+            end
+            ImGui.EndCombo(ctx)
+        else
+            ImGui.PopStyleVar(ctx)
+        end
+
+-- Copy/Paste Practice Section Markers
+
+        ImGui.SeparatorText(ctx, 'Copy / Paste Practice Section Markers in Timeline Selection')
+
+        -- Copy Markers button
+        if ImGui.Button(ctx, 'Copy Markers', 143, 30) then
+            CopyMarkers()
+        end
+
+        ImGui.SameLine(ctx)
+
+        -- Paste Markers button
+        if ImGui.Button(ctx, 'Paste Markers', 143, 30) then
+            PasteMarkers()
+        end
+
+        -- Display copied markers info
+        ImGui.TextWrapped(ctx, clipboard_display)
 
 -- Marker tools section
 
