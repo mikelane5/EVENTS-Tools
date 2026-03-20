@@ -1,4 +1,4 @@
-# **EVENTS Tools**  
+# **EVENTS Tools 1.03**  
 
 Event Tools helps you add common **Practice Sections** to your Reaper charts with the click of a button. You can also add text events like **[music_start]**, **[music_end]**, **[end]**, or any Crowd Clapping event too!
 
