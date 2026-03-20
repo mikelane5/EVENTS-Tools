@@ -6,8 +6,8 @@ Event Tools helps you add common **Practice Sections** to your Reaper charts wit
 
 This project is a fork of EVENT Tools (https://github.com/RaiderGG/EVENTS-Tools).
   
-<img width="1219" height="723" alt="EVENT Tools - Main Window" src="https://github.com/user-attachments/assets/041e751c-64d9-4423-a841-a0893b0526d9" />
-  
+<img width="1220" height="875" alt="Event Tools Fork" src="https://github.com/user-attachments/assets/ce4a5699-290f-4b28-bd33-6fa6f1814d63" />
+
 ## **Requirements**  
 The simplest way to get scripts working in Reaper is to follow the Milohax Reaper setup guide here: https://guides.milohax.org/en/charting/reaper/. This guide includes installing the SWS Extensions and includes the other files that you need.
 Otherwise you need to install SWS Extensions, ReaPack, and Realmgui manually. Note: You can install RealmGui via ReaPack.
@@ -17,7 +17,14 @@ https://reapack.com/
 ## Adding Practice Section Markers
 Practice section buttons are arranged in a logical order. Position the playhead where you want to create a marker and then click a practice section button. A color coded marker is created and the button changes color to match the marker. This gives you a visual map to refer to so that you know which markers you have already placed.
 
-<img width="1440" height="507" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/904d5d8c-430b-43df-9bf4-703b0e7af784" />
+<img width="1212" height="595" alt="EVENT Tools - Track Practice Sections Used" src="https://github.com/user-attachments/assets/66a13120-2f79-4a2d-8eba-0d3c5132b509" />
+
+
+## Search For Practice Section Markers 
+
+Only commonly used practice sections have a dedicated button. For all other practice sections use the **Search** field to find the practice section that you need. Type a full or partial search and then click the drop down arrow to view the results. Click on the required practice section to create the text event.
+
+<img width="305" height="448" alt="Search Drop Down" src="https://github.com/user-attachments/assets/8668e1a1-538e-4577-b13a-7c6af1368005" />
 
 ## Convert Practice Section Markers to EVENTS Track Text Events
 
