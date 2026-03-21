@@ -1758,7 +1758,7 @@ local function loop()
 
         -- Button for "Markers to Sections"
         if ImGui.Button(ctx, 'Copy Markers to EVENTS Track', 294, 30) then
-            MarkersToSections()
+            MarkersToSections(IsValidPracticeSection)
         end
 
 		-- Music events section

@@ -1,5 +1,5 @@
 -- Verificar si existe un track llamado "EVENTS"
-local function MarkersToSections()
+local function MarkersToSections(isValidFn)
     local track_name = "EVENTS"
     local track = nil
 
@@ -40,7 +40,7 @@ local function MarkersToSections()
     local _, num_markers = reaper.CountProjectMarkers(0)
     for i = 0, num_markers - 1 do
         local retval, is_region, pos, _, name, _ = reaper.EnumProjectMarkers(i)
-        if not is_region then
+        if not is_region and (not isValidFn or isValidFn(name)) then
             -- Formatear el nombre del marcador
             local formatted_text = "[prc_" .. name .. "]"
             -- Insertar el evento de texto
